@@ -1,0 +1,266 @@
+AI as Normal Technology
+
+An alternative to the vision of AI as a potential superintelligence
+
+By Arvind Narayanan & Sayash Kapoor
+
+April 15, 2025
+
+Artificial Intelligence and Democratic Freedoms
+
+A project studying how advanced AI systems may harm, or help strengthen,
+democratic freedoms
+
+We articulate a vision of artificial intelligence (AI) as normal
+technology. To view AI as normal is not to understate its impact—even
+transformative, general-purpose technologies such as electricity and the
+internet are “normal” in our conception. But it is in contrast to both
+utopian and dystopian visions of the future of AI which have a common
+tendency to treat it akin to a separate species, a highly autonomous,
+potentially superintelligent entity.[1]
+
+The statement “AI is normal technology” is three things: a description
+of current AI, a prediction about the foreseeable future of AI, and a
+prescription about how we should treat it. We view AI as a tool that we
+can and should remain in control of, and we argue that this goal does
+not require drastic policy interventions or technical breakthroughs. We
+do not think that viewing AI as a humanlike intelligence is currently
+accurate or useful for understanding its societal impacts, nor is it
+likely to be in our vision of the future.[2] 
+
+The normal technology frame is about the relationship between technology
+and society. It rejects technological determinism, especially the notion
+of AI itself as an agent in determining its future. It is guided by
+lessons from past technological revolutions, such as the slow and
+uncertain nature of technology adoption and diffusion. It also
+emphasizes continuity between the past and the future trajectory of AI
+in terms of societal impact and the role of institutions in shaping this
+trajectory.
+
+In Part I, we explain why we think that transformative economic and
+societal impacts will be slow (on the timescale of decades), making a
+critical distinction between AI methods, AI applications, and AI
+adoption, arguing that the three happen at different timescales.
+
+In Part II, we discuss a potential division of labor between humans and
+AI in a world with advanced AI (but not “superintelligent” AI, which we
+view as incoherent as usually conceptualized). In this world, control is
+primarily in the hands of people and organizations; indeed, a greater
+and greater proportion of what people do in their jobs is AI control.
+
+In Part III, we examine the implications of AI as normal technology for
+AI risks. We analyze accidents, arms races, misuse, and misalignment,
+and argue that viewing AI as normal technology leads to fundamentally
+different conclusions about mitigations compared to viewing AI as being
+humanlike.
+
+Of course, we cannot be certain of our predictions, but we aim to
+describe what we view as the median outcome. We have not tried to
+quantify probabilities, but we have tried to make predictions that can
+tell us whether or not AI is behaving like normal technology.
+
+In Part IV, we discuss the implications for AI policy. We advocate for
+reducing uncertainty as a first-rate policy goal and resilience as the
+overarching approach to catastrophic risks. We argue that drastic
+interventions premised on the difficulty of controlling superintelligent
+AI will, in fact, make things much worse if AI turns out to be normal
+technology— the downsides of which will be likely to mirror those of
+previous technologies that are deployed in capitalistic societies, such
+as inequality.[3] 
+
+The world we describe in Part II is one in which AI is far more advanced
+than it is today. We are not claiming that AI progress—or human
+progress—will stop at that point. What comes after it? We do not know.
+Consider this analogy: At the dawn of the first Industrial Revolution,
+it would have been useful to try to think about what an industrial world
+would look like and how to prepare for it, but it would have been futile
+to try to predict electricity or computers. Our exercise here is
+similar. Since we reject “fast takeoff” scenarios, we do not see it as
+necessary or useful to envision a world further ahead than we have
+attempted to. If and when the scenario we describe in Part II
+materializes, we will be able to better anticipate and prepare for
+whatever comes next.
+
+A note to readers. This essay has the unusual goal of stating a
+worldview rather than defending a proposition. The literature on AI
+superintelligence is copious. We have not tried to give a point-by-point
+response to potential counter arguments, as that would make the paper
+several times longer. This paper is merely the initial articulation of
+our views; we plan to elaborate on them in various follow ups.
+
+Part I: The Speed of Progress
+
+Figure 1. Like other general-purpose technologies, the impact of AI is
+materialized not when methods and capabilities improve, but when those
+improvements are translated into applications and are diffused through
+productive sectors of the economy.[4] There are speed limits at each
+stage.
+
+Will the progress of AI be gradual, allowing people and institutions to
+adapt as AI capabilities and adoption increase, or will there be jumps
+leading to massive disruption, or even a technological singularity? Our
+approach to this question is to analyze highly consequential tasks
+separately from less consequential tasks and to begin by analyzing the
+speed of adoption and diffusion of AI before returning to the speed of
+innovation and invention.
+
+We use invention to refer to the development of new AI methods—such as
+large language models—that improve AI’s capabilities to carry out
+various tasks. Innovation refers to the development of products and
+applications using AI that consumers and businesses can use. Adoption
+refers to the decision by an individual (or team or firm) to use a
+technology, whereas diffusion refers to the broader social process
+through which the level of adoption increases. For sufficiently
+disruptive technologies, diffusion might require changes to the
+structure of firms and organizations, as well as to social norms and
+laws.
+
+AI diffusion in safety-critical areas is slow
+
+In the paper Against Predictive Optimization, we compiled a
+comprehensive list of about 50 applications of predictive
+optimization, namely the use of machine learning (ML) to make
+decisions about individuals by predicting their future behavior or
+outcomes.[5] Most of these applications, such as criminal risk
+prediction, insurance risk prediction, or child maltreatment
+prediction, are used to make decisions that have important
+consequences for people.
+
+While these applications have proliferated, there is a crucial nuance:
+In most cases, decades-old statistical techniques are used—simple,
+interpretable models (mostly regression) and relatively small sets of
+handcrafted features. More complex machine learning methods, such as
+random forests, are rarely used, and modern methods, such as
+transformers, are nowhere to be found.
+
+In other words, in this broad set of domains, AI diffusion lags decades
+behind innovation. A major reason is safety—when models are more complex
+and less intelligible, it is hard to anticipate all possible deployment
+conditions in the testing and validation process. A good example is
+Epic’s sepsis prediction tool which, despite having seemingly high
+accuracy when internally validated, performed far worse in hospitals,
+missing two thirds of sepsis cases and overwhelming physicians with
+false alerts.[6]
+
+Epic’s sepsis prediction tool failed because of errors that are hard
+to catch when you have complex models with unconstrained feature
+sets.[7] In particular, one of the features used to train the model
+was whether a physician had already prescribed antibiotics —to treat
+sepsis. In other words, during testing and validation, the model was
+using a feature from the future, relying on a variable that was
+causally dependent on the outcome. Of course, this feature would not
+be available during deployment. Interpretability and auditing methods
+will no doubt improve so that we will get much better at catching
+these issues, but we are not there yet.
+
+In the case of generative AI, even failures that seem extremely obvious
+in hindsight were not caught during testing. One example is the early
+Bing chatbot “Sydney” that went off the rails during extended
+conversations; the developers evidently did not anticipate that
+conversations could last for more than a handful of turns.[8] 
+Similarly, the Gemini image generator was seemingly never tested on
+historical figures.[9]
+
+More empirical work would be helpful for understanding the
+innovation-diffusion lag in various applications and the reasons for
+this lag. But, for now, the evidence that we have analyzed in our
+previous work is consistent with the view that there are already
+extremely strong safety-related speed limits in highly consequential
+tasks. These limits are often enforced through regulation, such as the
+FDA’s supervision of medical devices, as well as newer legislation
+such as the EU AI Act, which puts strict requirements on high-risk
+AI.[10] In fact, there are (credible) concerns that existing
+regulation of high-risk AI is so onerous that it may lead to “runaway
+bureaucracy”.[11] Thus, we predict that slow diffusion will continue
+to be the norm in high-consequence tasks.
+
+At any rate, as and when new areas arise in which AI can be used in
+highly consequential ways, we can and must regulate them. A good
+example is the Flash Crash of 2010, in which automated high-frequency
+trading is thought to have played a part. This led to new curbs on
+trading, such as circuit breakers.[12] 
+
+
+Arvind Narayanan is a professor of computer science at Princeton
+University and was the Knight Institute visiting senior research
+scientist, 2022-2023.
+
+Sayash Kapoor is a Senior Fellow at Mozilla, a Laurance S. Rockefeller
+Fellow in the Princeton University Center for Human Values, and a
+computer science Ph.D. candidate at Princeton University's Center for
+Information Technology Policy.
+
+[1] Nick Bostrom. 2012. The superintelligent will: Motivation and
+instrumental rationality in advanced artificial agents. Minds and
+Machines 22, 2 (May 2012), 71–85.
+https://doi:10.1007/s11023-012-9281-3; Nick Bostrom. 2017.
+Superintelligence: Paths, Dangers, Strategies (reprinted with
+corrections). Oxford University Press, Oxford, United Kingdom; Sam
+Altman, Greg Brockman, and Ilya Sutskever. 2023. Governance of
+Superintelligence (May 2023).
+https://openai.com/blog/governance-of-superintelligence; Shazeda Ahmed
+et al. 2023. Building the Epistemic Community of AI Safety. SSRN:
+Rochester, NY. doi:10.2139/ssrn.4641526.
+
+[2] This is different from the question of whether it is helpful
+for an individual user to conceptualize a specific AI system as a tool
+as opposed to a human-like entity such as an intern, a co-worker, or a
+tutor.
+
+[3] Daron Acemoglu and Simon Johnson. 2023. Power and Progress: Our
+Thousand-Year Struggle over Technology and Prosperity .PublicAffairs,
+New York, NY.
+
+[4] Jeffrey Ding. 2024. Technology and the Rise of Great Powers: How
+Diffusion Shapes Economic Competition. Princeton University Press,
+Princeton.
+
+[5] Angelina Wang et al. 2023. Against predictive optimization: On the
+legitimacy of decision-making algorithms that optimize predictive
+accuracy. In Proceedings of the 2023 ACM Conference on Fairness,
+Accountability, and Transparency (Chicago, IL, USA: ACM, 2023),
+626–26. doi:10.1145/3593013.3594030.
+
+[6] Casey Ross. 2022. Epic’s Overhaul of a Flawed Algorithm Shows
+Why AI Oversight Is a Life-or-Death Issue. STAT.
+https://www.statnews.com/2022/10/24/epic-overhaul-of-a-flawed-algorithm/.
+
+[7] Andrew Wong et al. 2021. External validation of a widely
+implemented proprietary sepsis prediction model in hospitalized
+patients. JAMA Internal Medicine 181, 8 (August 2021), 1065–70,
+https://doi:10.1001/jamainternmed.2021.2626. 
+
+[8] Kevin Roose. 2023. A Conversation With Bing’s Chatbot Left Me
+Deeply Unsettled. The New York Times (February 2023).
+https://www.nytimes.com/2023/02/16/technology/bing-chatbot-microsoft-chatgpt.html.
+
+[9] 9. Dan Milmo and Alex Hern. 2024. ‘We definitely messed up’: why
+did Google AI tool make offensive historical images? The Guardian
+(March 2024).
+https://www.theguardian.com/technology/2024/mar/08/we-definitely-messed-up-why-did-google-ai-tool-make-offensive-historical-images
+Fortunately, these were not highly consequential applications.
+
+[10] Jamie Bernardi et al. 2024. Societal adaptation to advanced
+AI. arXiv: May 2024. Retrieved from http://arxiv.org/abs/2405.10295;
+Center for Devices and Radiological Health. 2024. Regulatory
+evaluation of new artificial intelligence (AI) uses for improving and
+automating medical practices. FDA (June 2024).
+https://www.fda.gov/medical-devices/medical-device-regulatory-science-research-programs-conducted-osel/regulatory-evaluation-new-artificial-intelligence-ai-uses-improving-and-automating-medical-practices;
+“Regulation (EU) 2024/1689 of the European Parliament and of the
+Council of 13 June 2024 Laying down Harmonised Rules on Artificial
+Intelligence and Amending Regulations (EC) No 300/2008, (EU) No
+167/2013, (EU) No 168/2013, (EU) 2018/858, (EU) 2018/1139 and (EU)
+2019/2144 and Directives 2014/90/EU, (EU) 2016/797 and (EU) 2020/1828
+(Artificial Intelligence Act) (Text with EEA Relevance),” June 2024,
+http://data.europa.eu/eli/reg/2024/1689/oj/eng.
+
+[11] Javier Espinoza. 2024. Europe’s rushed attempt to set the
+rules for AI. Financial Times (July 2024).
+https://www.ft.com/content/6cc7847a-2fc5-4df0-b113-a435d6426c81;
+Daniel E. Ho and Nicholas Bagley. 2024. Runaway bureaucracy could make
+common uses of ai worse, even mail delivery. The Hill (January 2024).
+https://thehill.com/opinion/technology/4405286-runaway-bureaucracy-could-make-common-uses-of-ai-worse-even-mail-delivery/.
+
+[12] 12. Avanidhar Subrahmanyam. 2013. Algorithmic trading, the flash
+crash, and coordinated circuit breakers. Borsa Istanbul Review 13, 3
+(September 2013), 4–9. http://doi:10.1016/j.bir.2013.10.003.
