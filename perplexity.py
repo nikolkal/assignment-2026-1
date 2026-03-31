@@ -17,14 +17,14 @@ def get_args():
     return parser.parse_args()
 
 
-def read_input_file(file_path):
+def load_text_file(file_path):
     path = Path(file_path)
     if not path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
     return path.read_text(encoding="utf-8")
 
 
-def load_model():
+def initialize_model():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
@@ -40,9 +40,9 @@ def main():
     print(f"Computing perplexity for {args.input_file}...")
     print("Tokenizing text...")
 
-    text = read_input_file(args.input_file)
-    tokenizer, model = load_model()
-
+    text = load_text_file(args.input_file)
+    tokenizer, model = initialize_model()
+    
     tokens = tokenizer(text).input_ids
 
     print(f"Found {len(tokens)} tokens")
