@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+import math
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -32,6 +33,7 @@ def initialize_model():
     )
     model.eval()
     return tokenizer, model
+
 
 def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
     if num_tokens <= 0:
@@ -77,6 +79,30 @@ def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
 
     return windows
 
+
+def compute_window_nll(window_tokens, target_start_in_window, target_end_in_window, model):
+    window_tensor = torch.tensor([window_tokens])
+
+    with torch.no_grad():
+        logits = model(window_tensor).logits
+
+    total_nll = 0.0
+
+    for token_pos in range(target_start_in_window, target_end_in_window):
+        row_index = token_pos - 1
+        row = logits[0, row_index].tolist()
+
+        max_val = max(row)
+        shifted = [x - max_val for x in row]
+        log_sum_exp = math.log(sum(math.exp(x) for x in shifted))
+        log_probs = [x - log_sum_exp for x in shifted]
+
+        target_token = window_tokens[token_pos]
+        total_nll += -log_probs[target_token]
+
+    return total_nll
+
+
 def main():
     args = get_args()
 
@@ -101,14 +127,20 @@ def main():
     print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
 
     for i, window in enumerate(windows, start=1):
-        predicted_tokens = window["target_end"] - window["target_start"]
-        print(
-            f"Window {i}: "
-            f"tokens {window['start']}–{window['end'] - 1} "
-            f"(predict {predicted_tokens} tokens)"
+        window_tokens = tokens[window["start"]:window["end"]]
+
+        target_start_in_window = window["target_start"] - window["start"]
+        target_end_in_window = window["target_end"] - window["start"]
+
+        window_nll = compute_window_nll(
+            window_tokens,
+            target_start_in_window,
+            target_end_in_window,
+            model,
         )
 
-    # προσωρινό output file
+        print(f"Window {i}/{len(windows)}: nll={window_nll:.4f}")
+
     Path(args.out_file).write_text("", encoding="utf-8")
 
 
