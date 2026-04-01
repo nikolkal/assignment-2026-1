@@ -33,25 +33,50 @@ def initialize_model():
     model.eval()
     return tokenizer, model
 
-
-def count_windows(num_tokens, n_ctx, stride, begin_context_tokens):
+def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
     if num_tokens <= 0:
-        return 0
+        return []
 
+    if n_ctx <= 0:
+        raise ValueError("n_ctx must be positive")
+    if stride <= 0:
+        raise ValueError("stride must be positive")
     if begin_context_tokens <= 0:
         raise ValueError("begin_context_tokens must be positive")
 
-    if stride <= 0:
-        raise ValueError("stride must be positive")
+    windows = []
 
-    first_predicted_tokens = min(begin_context_tokens, num_tokens)
-    remaining_tokens = num_tokens - first_predicted_tokens
+    end = min(n_ctx, num_tokens)
+    first_target_len = min(begin_context_tokens, end)
+    first_target_start = end - first_target_len
 
-    windows = 1
-    if remaining_tokens > 0:
-        windows += (remaining_tokens + stride - 1) // stride
+    windows.append({
+        "start": 0,
+        "end": end,
+        "target_start": first_target_start,
+        "target_end": end,
+    })
+
+    predicted_until = end
+
+    while predicted_until < num_tokens:
+        target_start = predicted_until
+        target_end = min(predicted_until + stride, num_tokens)
+
+        end = target_end
+        start = max(0, end - n_ctx)
+
+        windows.append({
+            "start": start,
+            "end": end,
+            "target_start": target_start,
+            "target_end": target_end,
+        })
+
+        predicted_until = target_end
 
     return windows
+
 
 
 def main():
@@ -68,14 +93,22 @@ def main():
 
     print(f"Found {num_tokens} tokens")
 
-    window_count = count_windows(
-        num_tokens,
-        args.n_ctx,
-        args.stride,
-        args.begin_context_tokens,
-    )
+    windows = build_windows(
+    num_tokens,
+    args.n_ctx,
+    args.stride,
+    args.begin_context_tokens,
+)
 
-    print(f"Processing {num_tokens} tokens in {window_count} window(s).")
+print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
+
+for i, window in enumerate(windows, start=1):
+    predicted_tokens = window["target_end"] - window["target_start"]
+    print(
+        f"Window {i}: "
+        f"tokens {window['start']}–{window['end'] - 1} "
+        f"(predict {predicted_tokens} tokens)"
+    )
 
     # προσωρινό output file
     Path(args.out_file).write_text("", encoding="utf-8")
