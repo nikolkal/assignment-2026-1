@@ -1,7 +1,6 @@
 import argparse
 from pathlib import Path
 
-
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -35,6 +34,26 @@ def initialize_model():
     return tokenizer, model
 
 
+def count_windows(num_tokens, n_ctx, stride, begin_context_tokens):
+    if num_tokens <= 0:
+        return 0
+
+    if begin_context_tokens <= 0:
+        raise ValueError("begin_context_tokens must be positive")
+
+    if stride <= 0:
+        raise ValueError("stride must be positive")
+
+    first_predicted_tokens = min(begin_context_tokens, num_tokens)
+    remaining_tokens = num_tokens - first_predicted_tokens
+
+    windows = 1
+    if remaining_tokens > 0:
+        windows += (remaining_tokens + stride - 1) // stride
+
+    return windows
+
+
 def main():
     args = get_args()
 
@@ -43,10 +62,20 @@ def main():
 
     text = load_text_file(args.input_file)
     tokenizer, model = initialize_model()
-    
-    tokens = tokenizer(text).input_ids
 
-    print(f"Found {len(tokens)} tokens")
+    tokens = tokenizer(text).input_ids
+    num_tokens = len(tokens)
+
+    print(f"Found {num_tokens} tokens")
+
+    window_count = count_windows(
+        num_tokens,
+        args.n_ctx,
+        args.stride,
+        args.begin_context_tokens,
+    )
+
+    print(f"Processing {num_tokens} tokens in {window_count} window(s).")
 
     # προσωρινό output file
     Path(args.out_file).write_text("", encoding="utf-8")
