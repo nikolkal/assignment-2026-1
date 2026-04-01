@@ -77,8 +77,6 @@ def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
 
     return windows
 
-
-
 def main():
     args = get_args()
 
@@ -94,21 +92,21 @@ def main():
     print(f"Found {num_tokens} tokens")
 
     windows = build_windows(
-    num_tokens,
-    args.n_ctx,
-    args.stride,
-    args.begin_context_tokens,
-)
-
-print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
-
-for i, window in enumerate(windows, start=1):
-    predicted_tokens = window["target_end"] - window["target_start"]
-    print(
-        f"Window {i}: "
-        f"tokens {window['start']}–{window['end'] - 1} "
-        f"(predict {predicted_tokens} tokens)"
+        num_tokens,
+        args.n_ctx,
+        args.stride,
+        args.begin_context_tokens,
     )
+
+    print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
+
+    for i, window in enumerate(windows, start=1):
+        predicted_tokens = window["target_end"] - window["target_start"]
+        print(
+            f"Window {i}: "
+            f"tokens {window['start']}–{window['end'] - 1} "
+            f"(predict {predicted_tokens} tokens)"
+        )
 
     # προσωρινό output file
     Path(args.out_file).write_text("", encoding="utf-8")
