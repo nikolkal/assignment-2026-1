@@ -80,8 +80,15 @@ def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
     return windows
 
 
-def compute_window_nll(window_tokens, target_start_in_window, target_end_in_window, model):
-    window_tensor = torch.tensor([window_tokens])
+def compute_window_nll(
+    window_tokens,
+    target_start_in_window,
+    target_end_in_window,
+    model,
+    bos_token,
+):
+    model_input = [bos_token] + window_tokens
+    window_tensor = torch.tensor([model_input], dtype=torch.long)
 
     with torch.no_grad():
         logits = model(window_tensor).logits
@@ -89,7 +96,7 @@ def compute_window_nll(window_tokens, target_start_in_window, target_end_in_wind
     total_nll = 0.0
 
     for token_pos in range(target_start_in_window, target_end_in_window):
-        row_index = token_pos - 1
+        row_index = token_pos
         row = logits[0, row_index].tolist()
 
         max_val = max(row)
@@ -111,15 +118,18 @@ def main():
 
     text = load_text_file(args.input_file)
     tokenizer, model = initialize_model()
+    bos_token = tokenizer.bos_token_id
 
     tokens = tokenizer(text).input_ids
     num_tokens = len(tokens)
 
     print(f"Found {num_tokens} tokens")
 
+    effective_n_ctx = args.n_ctx - 1
+
     windows = build_windows(
         num_tokens,
-        args.n_ctx,
+        effective_n_ctx,
         args.stride,
         args.begin_context_tokens,
     )
@@ -137,6 +147,7 @@ def main():
             target_start_in_window,
             target_end_in_window,
             model,
+            bos_token,
         )
 
         print(f"Window {i}/{len(windows)}: nll={window_nll:.4f}")
