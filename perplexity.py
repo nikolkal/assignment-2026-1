@@ -136,11 +136,15 @@ def main():
 
     print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
 
+    total_nll = 0.0
+    total_predicted_tokens = 0
+
     for i, window in enumerate(windows, start=1):
         window_tokens = tokens[window["start"]:window["end"]]
 
         target_start_in_window = window["target_start"] - window["start"]
         target_end_in_window = window["target_end"] - window["start"]
+        predicted_tokens = target_end_in_window - target_start_in_window
 
         window_nll = compute_window_nll(
             window_tokens,
@@ -150,10 +154,20 @@ def main():
             bos_token,
         )
 
+        total_nll += window_nll
+        total_predicted_tokens += predicted_tokens
+
         print(f"Window {i}/{len(windows)}: nll={window_nll:.4f}")
 
-    Path(args.out_file).write_text("", encoding="utf-8")
+    mean_nll = total_nll / total_predicted_tokens
+    perplexity = math.exp(mean_nll)
 
+    print(f"Perplexity: {perplexity:.2f}")
+
+    Path(args.out_file).write_text(
+        f"Perplexity: {perplexity:.2f}\n",
+        encoding="utf-8"
+    )
 
 if __name__ == "__main__":
     main()
