@@ -5,6 +5,7 @@ import math
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+
 MODEL_NAME = "facebook/opt-125m"
 
 
@@ -26,10 +27,15 @@ def load_text_file(file_path):
 
 
 def initialize_model():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(
+        MODEL_NAME,
+        local_files_only=True
+    )
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        tie_word_embeddings=False
+        tie_word_embeddings=False,
+        local_files_only=True,
+        use_safetensors=False
     )
     model.eval()
     return tokenizer, model
@@ -48,18 +54,18 @@ def build_windows(num_tokens, n_ctx, stride, begin_context_tokens):
 
     windows = []
 
-    end = min(n_ctx, num_tokens)
-    first_target_len = min(begin_context_tokens, end)
-    first_target_start = end - first_target_len
+    first_end = min(n_ctx, num_tokens)
+    first_target_len = min(begin_context_tokens, first_end)
+    first_target_start = first_end - first_target_len
 
     windows.append({
         "start": 0,
-        "end": end,
+        "end": first_end,
         "target_start": first_target_start,
-        "target_end": end,
+        "target_end": first_end,
     })
 
-    predicted_until = end
+    predicted_until = first_end
 
     while predicted_until < num_tokens:
         target_start = predicted_until
@@ -113,19 +119,20 @@ def compute_window_nll(
 def main():
     args = get_args()
 
-    print(f"Computing perplexity for {args.input_file}...")
-    print("Tokenizing text...")
-
     text = load_text_file(args.input_file)
     tokenizer, model = initialize_model()
     bos_token = tokenizer.bos_token_id
 
     tokens = tokenizer(text).input_ids
+
+    if tokens and tokens[0] == bos_token:
+        tokens = tokens[1:]
+
     num_tokens = len(tokens)
 
-    print(f"Found {num_tokens} tokens")
-
     effective_n_ctx = args.n_ctx - 1
+    if effective_n_ctx <= 0:
+        raise ValueError("n_ctx must be at least 2 so there is room for BOS")
 
     windows = build_windows(
         num_tokens,
@@ -134,12 +141,10 @@ def main():
         args.begin_context_tokens,
     )
 
-    print(f"Processing {num_tokens} tokens in {len(windows)} window(s).")
-
     total_nll = 0.0
     total_predicted_tokens = 0
 
-    for i, window in enumerate(windows, start=1):
+    for window in windows:
         window_tokens = tokens[window["start"]:window["end"]]
 
         target_start_in_window = window["target_start"] - window["start"]
@@ -157,7 +162,8 @@ def main():
         total_nll += window_nll
         total_predicted_tokens += predicted_tokens
 
-        print(f"Window {i}/{len(windows)}: nll={window_nll:.4f}")
+    if total_predicted_tokens == 0:
+        raise ValueError("No tokens were predicted; check input and parameters")
 
     mean_nll = total_nll / total_predicted_tokens
     perplexity = math.exp(mean_nll)
@@ -168,6 +174,7 @@ def main():
         f"Perplexity: {perplexity:.2f}\n",
         encoding="utf-8"
     )
+
 
 if __name__ == "__main__":
     main()
